@@ -1,0 +1,43 @@
+services:
+  nsqlookupd:
+    container_name: nsqlookupd
+    image: nsqio/nsq
+    command: /nsqlookupd
+    ports:
+      - "14160:4160"
+      - "14161:4161"
+  nsqd:
+    container_name: nsqd
+    image: nsqio/nsq
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160 --data-path=/data -statsd-address=host.docker.internal:8200 -e2e-processing-latency-percentile=1.0,0.99,0.95 -e2e-processing-latency-window-time=1m0s
+    depends_on:
+      - nsqlookupd
+    volumes:
+      - ./nsq_data:/data
+    ports:
+      - "14150:4150"
+      - "14151:4151"
+  nsqadmin:
+    container_name: nsqadmin
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd  
+    ports:
+      - "14171:4171"
+#############
+#############
+#############
+###REDIS#####
+#############
+#############
+#############
+  redis:
+    image: redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - ./redis_data:/bitnami/redis/data
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - ALLOW_EMPTY_PASSWORD=yes

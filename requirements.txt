@@ -1,0 +1,7 @@
+elastic-apm==6.23.0
+fastapi==0.112.0
+gnsq==1.0.2
+pydantic==2.8.2
+starlette==0.37.2
+uvicorn==0.30.5
+redis==4.0.2
